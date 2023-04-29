@@ -30,7 +30,10 @@ AggregateBuildingsGeo <- function(city){
   buildings_groupcounts <- buildings_dummies |> 
     group_by(Neighborhood_FID) |> 
     summarise(across(-Build_ID,
-                     \(x) sum(x, na.rm = TRUE)))
+                     \(x) sum(x, na.rm = TRUE))) |> 
+    mutate(across(everything(), 
+                  \(x) (replace_na(x, 0))))
+    
   
   buildings_avgs <- buildings |> 
     select(Build_ID, Neighborhood_FID, Building_Age, Building_Height) |> 
@@ -41,6 +44,7 @@ AggregateBuildingsGeo <- function(city){
       mean_building_height = mean(Building_Height, na.rm=T),
       mean_sq_building_height = sqrt(mean(Building_Height^2, na.rm=T))
     )
+  
   
   buildings_agg <- buildings_avgs |> left_join(buildings_groupcounts, by="Neighborhood_FID")
   

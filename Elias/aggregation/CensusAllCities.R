@@ -48,7 +48,9 @@ AggregateCensus <- function(city, dataset){
   total_string <- paste(tolower(dataset), "_total_units", sep = "")
   group_shares <- group_counts |> 
     mutate(across(-c(Neighborhood_FID, !!sym(total_string)), 
-                  \(x) (x/!!sym(total_string))))
+                  \(x) (x/!!sym(total_string)))) |> 
+    mutate(across(everything(), 
+                  \(x) (replace_na(x, 0))))
   
   write_csv(group_shares, writepath)
   return(0)
