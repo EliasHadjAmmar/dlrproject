@@ -48,5 +48,4 @@ AggregateBuildingsGeo <- function(city){
   return(0)
 }
 
-AggregateBuildingsGeo("Berlin")
 Main()
