@@ -3,3 +3,5 @@ data/
 data.zip
 .gpkg
 drive
+.RData
+.Rhistory

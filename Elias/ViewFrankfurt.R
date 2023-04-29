@@ -24,3 +24,6 @@ hosps <- ffm_buildings |>
   filter(Building_Type == "hospital")
 mapview(hosps)
 
+GRID_TO_NBH <- st_join(ffm_landprices, ffm_zensus) |> 
+  st_drop_geometry()
+write_csv(GRID_TO_NBH, "drive/temp/gridcells_neighbourhoods.csv")
