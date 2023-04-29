@@ -11,7 +11,7 @@ from streamlit_folium import folium_static
 
 # Read in GeoPackage files
 neighborhoods_bremen = gpd.read_file("/Users/nathan/Desktop/ifo_streamlit/Example_Bremen_Land_Values_Neighborhood.gpkg")
-buildings_bremen = gpd.read_file("/Users/nathan/Desktop/ifo_streamlit/Example_Bremen_Buildings.gpkg")
+# buildings_bremen = gpd.read_file("/Users/nathan/Desktop/ifo_streamlit/Example_Bremen_Buildings.gpkg")
 
 # Create Folium map object
 m = folium.Map(location=[neighborhoods_bremen.geometry.centroid.y.mean(), 
@@ -22,7 +22,7 @@ m = folium.Map(location=[neighborhoods_bremen.geometry.centroid.y.mean(),
 folium.GeoJson(neighborhoods_bremen).add_to(m)
 
 # Add buildings layer to map
-folium.GeoJson(buildings_bremen, style_function=lambda x: {'color': 'red'}).add_to(m)
+# folium.GeoJson(buildings_bremen, style_function=lambda x: {'color': 'red'}).add_to(m)
 
 # Add layer control to map
 folium.LayerControl().add_to(m)
