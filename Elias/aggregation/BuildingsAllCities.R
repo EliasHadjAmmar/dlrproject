@@ -16,7 +16,7 @@ Main <- function(){
 AggregateBuildingsGeo <- function(city){
   
   readpath <- sprintf("drive/data/buildings/Buildings_%s.gpkg", city)
-  writepath <- sprintf("drive/aggregates/%s/buildings.csv", city)
+  writepath <- sprintf("drive/aggregates/%s/GeoBuildings_agg.csv", city)
   
   buildings <- st_read(readpath) |> 
     st_drop_geometry()
