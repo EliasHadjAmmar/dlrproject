@@ -25,9 +25,10 @@ data_paths <- data_names |> purrr::map_chr(
 )
 data_list <- data_paths |> map(read_csv)
 
-joined <- data_list |> reduce(left_join)
+joined <- data_list |> reduce(left_join) |> 
+  select_if(~ !any(is.na(.))) # |> 
+# ncol() # 163
 
-# joined |> select_if(~ !any(is.na(.))) |> ncol() # 163
 
 joined_with_keys <- joined |> 
   mutate(id = paste(city_id, Neighborhood_FID, sep="_"))
