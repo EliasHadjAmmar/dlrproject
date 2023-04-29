@@ -6,8 +6,6 @@ setwd("~/GitHub/dlrproject")
 buildings <- st_read("drive/data/buildings/Buildings_Frankfurt_am_Main.gpkg") |> 
   st_drop_geometry()
 
-buildings
-
 buildings_dummies <- buildings |>
   fastDummies::dummy_cols(select_columns = "Building_Type") |> 
   fastDummies::dummy_cols(select_columns = "Building_TypeGen") |> 
