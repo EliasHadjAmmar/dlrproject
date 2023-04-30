@@ -3,25 +3,26 @@ from streamlit_folium import st_folium
 import folium
 from PIL import Image
 
-
-########## Data Processing ##########
 from shapely.geometry import shape
 import geopandas as gpd
 
+# logo image
+
 logo_image = "/Users/nathan/Desktop/ifo_streamlit/DLR_Logo.svg.png"
-st.image(logo_image, use_column_width=True)
+st.image(logo_image, width = 200)
 
 
 # Map Title
 st.title("Map")
+st.text("Note that you can choose the layer you want by changing the selection in top right corner of map")
 
 # Sidebar
 data_options = {
-    "Bremen": "/Users/nathan/Desktop/ifo_streamlit/Bremen_map.gpkg",
-    "Berlin": "/Users/nathan/Desktop/ifo_streamlit/Berlin_map.gpkg",
-    "Dresden": "/Users/nathan/Desktop/ifo_streamlit/Dresden_map.gpkg",
-    "Frankfurt": "/Users/nathan/Desktop/ifo_streamlit/Frankfurt_am_Main_map.gpkg",
-    "Köln": "/Users/nathan/Desktop/ifo_streamlit/Köln_map.gpkg"
+    "Bremen": "/Users/nathan/Library/CloudStorage/GoogleDrive-nathanmbewe5@gmail.com/.shortcut-targets-by-id/1j495iyGjPzVzr6s5r1wsfRbHdWi1nifC/ifoHack2023/output/Bremen_map.gpkg",
+    "Berlin": "/Users/nathan/Library/CloudStorage/GoogleDrive-nathanmbewe5@gmail.com/.shortcut-targets-by-id/1j495iyGjPzVzr6s5r1wsfRbHdWi1nifC/ifoHack2023/output/Berlin_map.gpkg",
+    "Dresden": "/Users/nathan/Library/CloudStorage/GoogleDrive-nathanmbewe5@gmail.com/.shortcut-targets-by-id/1j495iyGjPzVzr6s5r1wsfRbHdWi1nifC/ifoHack2023/output/Dresden_map.gpkg",
+    "Frankfurt": "//Users/nathan/Library/CloudStorage/GoogleDrive-nathanmbewe5@gmail.com/.shortcut-targets-by-id/1j495iyGjPzVzr6s5r1wsfRbHdWi1nifC/ifoHack2023/output/Frankfurt_am_Main_map.gpkg",
+    "Köln": "/Users/nathan/Library/CloudStorage/GoogleDrive-nathanmbewe5@gmail.com/.shortcut-targets-by-id/1j495iyGjPzVzr6s5r1wsfRbHdWi1nifC/ifoHack2023/output/Köln_map.gpkg"
 
 }
 selected_option = st.sidebar.selectbox("Select Data Option and hover over area", list(data_options.keys()))
@@ -39,13 +40,43 @@ try:
 
     folium.TileLayer('stamentoner').add_to(m)
 
+    folium.Choropleth(
+        geo_data=data,  # Replace with the path to your GeoJSON file
+        data=data,
+        columns=['Neighborhood_FID', 'segregation_H'],  # Replace with the column names in your data
+        key_on='feature.properties.Neighborhood_FID',
+        fill_color='YlGnBu',  # Specify the color scale or use a custom color scheme
+        fill_opacity=0.7,
+        line_opacity=0.2,
+        legend_name='Segregation Level',
+        highlight=True
+        ).add_to(m)
+
+    
     folium.LayerControl().add_to(m)
 
 # call to render Folium map in Streamlit
     st_data = st_folium(m, width=725)
     print(data)
 
-    st.write(data['Land_Value_predicted'])
+    data1= data['Land_Value']
+    data2= data['Land_Value_predicted']
+    data3= data[["segregation_H","Neighborhood_FID"]]
+
+
+# Create two columns for layout
+    col1, col2 = st.columns(2)
+
+# Display the first table
+    with col1:
+        st.dataframe(data1)
+
+# Display the second table
+    with col2:
+        st.dataframe(data2)
+
+
+
 
     if st_data['last_active_drawing'] is not None:
         keysList = list(st_data.keys())
@@ -68,46 +99,8 @@ try:
 except Exception as e:        
     st.sidebar.error(f"Error loading data: {str(e)}")
 
-if st.button("Click Me"):
-        st.write("Image clicked!")
-
-# if 'geometry' in data.columns:
-#         m.canvas.mpl_connect('button_press_event', lambda event: onClick(event, data))
-
-# def onClick(event, data):
-#     if event.inaxes:
-#         x = event.xdata
-#         y = event.ydata
-#         point = gpd.GeoSeries([gpd.points_from_xy([x], [y])], crs=data.crs)
-#         selected_rows = data[data.intersects(point.unary_union)]
-#         if not selected_rows.empty:
-#             st.subheader("Selected Rows")
-#             st.write(selected_rows)
-
-# print(st_data)            
 
 
-# #Tif image
-# if data_path = "/Users/nathan/Desktop/ifo_streamlit/Land_Prices_Neighborhood_Bremen.gpkg":
-#     fn = "/Users/nathan/Desktop/ifo_streamlit/WorldCover_Bremen.tif"
-#     image = Image.open(fn)
-#     st.image(image)
-# elif data_path = "/Users/nathan/Desktop/ifo_streamlit/Land_Prices_Neighborhood_Bremen.gpkg":
-#     fn = "/Users/nathan/Desktop/ifo_streamlit/WorldCover_Bremen.tif"
-#     image = Image.open(fn)
-#     st.image(image)
-# elif data_path = "/Users/nathan/Desktop/ifo_streamlit/Land_Prices_Neighborhood_Bremen.gpkg":
-#     fn = "/Users/nathan/Desktop/ifo_streamlit/WorldCover_Bremen.tif"
-#     image = Image.open(fn)
-#     st.image(image)
-# elif data_path = "/Users/nathan/Desktop/ifo_streamlit/Land_Prices_Neighborhood_Bremen.gpkg":
-#     fn = "/Users/nathan/Desktop/ifo_streamlit/WorldCover_Bremen.tif"
-#     image = Image.open(fn)
-#     st.image(image)
-# else :
-#     fn = "/Users/nathan/Desktop/ifo_streamlit/WorldCover_Bremen.tif"
-#     image = Image.open(fn)
-#     st.image(image)
 
 
 ########## Folium Map Styling ##########
