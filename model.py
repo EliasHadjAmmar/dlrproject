@@ -3,6 +3,9 @@ import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 
 def model_fit(X_train, y_train):
+
+    X_train = X_train.drop("City_Name", axis=1)
+
     # Set hyperparameters
     n_estimators = 1000
     max_depth = 100
@@ -18,6 +21,8 @@ def model_fit(X_train, y_train):
 
 
 def model_predict(model, X_test):
+
+    X_test = X_test.drop("City_Name", axis=1)
     
     y_pred = model.predict(X_test)
 
