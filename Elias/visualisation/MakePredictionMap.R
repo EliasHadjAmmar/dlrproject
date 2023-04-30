@@ -12,11 +12,12 @@ Main <- function(){
   
 
   prediction_map <- predictions |> 
-    select(city_id, Neighborhood_FID, Land_Value, 
-           Land_Value_predicted, buildings_total_units, n_vacant)
+    select(city_id, Neighborhood_FID, Land_Value, H,
+           Land_Value_predicted, buildings_total_units, n_vacant) |> 
+    rename(segregation_H = H)
   
   #mapview(prediction_map)
-  #st_write(prediction_map, "drive/output/prediction_map.gpkg") # to output one with 5 cities
+  st_write(prediction_map, "drive/output/prediction_map.gpkg") # to output one with 5 cities
   
   # to get 5 separate maps (messy but it works):
   1:5 |> map(
