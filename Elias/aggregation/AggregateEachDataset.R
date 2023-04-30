@@ -2,7 +2,7 @@ library(tidyverse)
 setwd("~/GitHub/dlrproject")
 
 Main <- function(){
-  data_names <- c("GeoBuildings", "Buildings", "Families", "Households", "Population")
+  data_names <- c("GeoBuildings", "Buildings", "Families", "Households", "Population", "Segregation")
   for (i in data_names){
     AggregateOneDataset(i)
   }

@@ -45,7 +45,7 @@ SegregForOneCity <- function(city){
                              within="Neighborhood_FID", weight="n", wide=TRUE)
   
   # Write to drive
-  write_csv(segreg, sprintf("drive/aggregates/%s/Segregation.csv", city))
+  write_csv(segreg, sprintf("drive/aggregates/%s/Segregation_agg.csv", city))
 }
 
 Main()
