@@ -1,70 +1,136 @@
 import streamlit as st
-import geopandas as gpd
+from streamlit_folium import st_folium
 import folium
-import rioxarray as riox
-import numpy as np
-import matplotlib.pyplot as plt
-import os
-from streamlit_folium import folium_static
+from PIL import Image
 
 
+########## Data Processing ##########
+from shapely.geometry import shape
+import geopandas as gpd
 
-# Read in GeoPackage files
-neighborhoods_bremen = gpd.read_file("/Users/nathan/Desktop/ifo_streamlit/Example_Bremen_Land_Values_Neighborhood.gpkg")
-# buildings_bremen = gpd.read_file("/Users/nathan/Desktop/ifo_streamlit/Example_Bremen_Buildings.gpkg")
-
-# Create Folium map object
-m = folium.Map(location=[neighborhoods_bremen.geometry.centroid.y.mean(), 
-                         neighborhoods_bremen.geometry.centroid.x.mean()], 
-               zoom_start=12)
-
-# Add neighborhoods layer to map
-folium.GeoJson(neighborhoods_bremen).add_to(m)
-
-# Add buildings layer to map
-# folium.GeoJson(buildings_bremen, style_function=lambda x: {'color': 'red'}).add_to(m)
-
-# Add layer control to map
-folium.LayerControl().add_to(m)
-
-# Display map in Streamlit
-st.title("Bremen Land Values Map")
-folium_static(m)
+logo_image = "/Users/nathan/Desktop/ifo_streamlit/DLR_Logo.svg.png"
+st.image(logo_image, use_column_width=True)
 
 
-# westend = neighborhoods_bremen.loc[neighborhoods_bremen.Neighborhood_Name == "Westend"]
-# buildings_westend = buildings_bremen.clip(westend.geometry)
+# Map Title
+st.title("Map")
 
-# m = westend.explore(height=500, width=1000, name="Neighborhoods")
-# m = buildings_westend.explore(m=m, color="red", name="Buildings")
+# Sidebar
+data_options = {
+    "Bremen": "/Users/nathan/Desktop/ifo_streamlit/Bremen_map.gpkg",
+    "Berlin": "/Users/nathan/Desktop/ifo_streamlit/Berlin_map.gpkg",
+    "Dresden": "/Users/nathan/Desktop/ifo_streamlit/Dresden_map.gpkg",
+    "Frankfurt": "/Users/nathan/Desktop/ifo_streamlit/Frankfurt_am_Main_map.gpkg",
+    "Köln": "/Users/nathan/Desktop/ifo_streamlit/Köln_map.gpkg"
 
-# folium.LayerControl().add_to(m)
-# m
+}
+selected_option = st.sidebar.selectbox("Select Data Option and hover over area", list(data_options.keys()))
 
-# westend_area = westend.area.values[0]
-# buildings_area = np.sum(buildings_westend.area)
-# print(westend_area)
-# print(buildings_area)
+def load_data(path):
+    return gpd.read_file(path)
 
-# building_density = buildings_area / westend_area * 100
-# print(building_density)
+try:        
+    data_path = data_options[selected_option]        
+    data = load_data(data_path)        
+    m = data.explore(height=500, width=1000, name="Neighborhoods", tiles=None)
 
-# building_density = []  # Empty List which gets filled iteratively
-# neighborhood_names = neighborhoods_bremen.Neighborhood_Name.values  # Needed for loop and indexing
+#custom figure
+#folium.GeoJson(neighborhoods_berlin, style_function=style_function, highlight_function=lambda x: {'weight':3,'fillOpacity':0.3, 'fillColor': 'red',}).add_to(m)
 
-# for neighborhood in neighborhood_names:
-#     subset = neighborhoods_bremen.loc[neighborhoods_bremen.Neighborhood_Name == neighborhood]  # Get one neighborhood
-#     buildings_clip = buildings_bremen.clip(subset.geometry)  # Clip all buildings to one neighborhood
-#     building_density.append(np.sum(buildings_clip.area) / subset.area.values[0] * 100)  #  Building Area / Total Area = Density
+    folium.TileLayer('stamentoner').add_to(m)
+
+    folium.LayerControl().add_to(m)
+
+# call to render Folium map in Streamlit
+    st_data = st_folium(m, width=725)
+    print(data)
+
+    st.write(data['Land_Value_predicted'])
+
+    if st_data['last_active_drawing'] is not None:
+        keysList = list(st_data.keys())
+    #print(keysList)
+    #print(st_data['last_active_drawing']['id'])
+    #print(type(st_data['last_active_drawing']['geometry']['coordinates']))
     
-# neighborhoods_bremen["Building_Density"] = building_density  # Add new list to dataframe
+    ########## Get FID and Coords ##########
+        st_data
+        last_neighborhoods_fid = st_data['last_active_drawing']['properties']['Neighborhood_FID']
+        last_click_coords = [st_data['last_clicked']['lat'], st_data['last_clicked']['lng']]
 
-# neighborhoods_bremen.head()
+    ########## Get centroid from Area ##########
+        polygon_coords = st_data['last_active_drawing']['geometry']
+        coord = shape(polygon_coords).centroid
+        last_neighborhoods_coords = [coord.y, coord.x] #longitude / latitude
 
-# m = buildings_bremen.explore(color="gray", name="Buildings")
-# m = neighborhoods_bremen.explore(m=m, height=500, width=1000, name="Neighborhoods",
-#                              column = "Building_Density", scheme = "quantiles", cmap = "RdYlBu_r", legend = True)
+        output()    
+        
+except Exception as e:        
+    st.sidebar.error(f"Error loading data: {str(e)}")
+
+if st.button("Click Me"):
+        st.write("Image clicked!")
+
+# if 'geometry' in data.columns:
+#         m.canvas.mpl_connect('button_press_event', lambda event: onClick(event, data))
+
+# def onClick(event, data):
+#     if event.inaxes:
+#         x = event.xdata
+#         y = event.ydata
+#         point = gpd.GeoSeries([gpd.points_from_xy([x], [y])], crs=data.crs)
+#         selected_rows = data[data.intersects(point.unary_union)]
+#         if not selected_rows.empty:
+#             st.subheader("Selected Rows")
+#             st.write(selected_rows)
+
+# print(st_data)            
 
 
-# folium.LayerControl().add_to(m)
-# m
+# #Tif image
+# if data_path = "/Users/nathan/Desktop/ifo_streamlit/Land_Prices_Neighborhood_Bremen.gpkg":
+#     fn = "/Users/nathan/Desktop/ifo_streamlit/WorldCover_Bremen.tif"
+#     image = Image.open(fn)
+#     st.image(image)
+# elif data_path = "/Users/nathan/Desktop/ifo_streamlit/Land_Prices_Neighborhood_Bremen.gpkg":
+#     fn = "/Users/nathan/Desktop/ifo_streamlit/WorldCover_Bremen.tif"
+#     image = Image.open(fn)
+#     st.image(image)
+# elif data_path = "/Users/nathan/Desktop/ifo_streamlit/Land_Prices_Neighborhood_Bremen.gpkg":
+#     fn = "/Users/nathan/Desktop/ifo_streamlit/WorldCover_Bremen.tif"
+#     image = Image.open(fn)
+#     st.image(image)
+# elif data_path = "/Users/nathan/Desktop/ifo_streamlit/Land_Prices_Neighborhood_Bremen.gpkg":
+#     fn = "/Users/nathan/Desktop/ifo_streamlit/WorldCover_Bremen.tif"
+#     image = Image.open(fn)
+#     st.image(image)
+# else :
+#     fn = "/Users/nathan/Desktop/ifo_streamlit/WorldCover_Bremen.tif"
+#     image = Image.open(fn)
+#     st.image(image)
+
+
+########## Folium Map Styling ##########
+
+def style_function(feature):
+    return {
+        'fillColor': 'blue',
+        'color': 'black',
+        'weight': 1,
+        'fillOpacity': 0.1,
+        'opacity': 0.5,
+    }
+
+def output():
+    ########## Output ##########
+    print("last neighborhoods FID:")
+    print(last_neighborhoods_fid)
+    print("last neighborhoods center coords:")
+    print(last_neighborhoods_coords)
+    print("last click coords:")
+    print(last_click_coords)
+########## Variables ##########
+# first latitude then longitude 
+last_neighborhoods_coords = [0, 0]
+last_neighborhoods_fid = 0
+last_click_coords = [0, 0]
