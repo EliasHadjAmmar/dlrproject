@@ -12,6 +12,4 @@ Insert elevator pitch here
     - `mklink /J PATH-TO-REPO\drive\ PATH-TO-DRIVE` in the Windows command prompt.
     - [Symlink](https://www.howtogeek.com/297721/how-to-create-and-use-symbolic-links-aka-symlinks-on-a-mac/) `ln -s PATH-TO-DRIVE PATH-TO-REPO/drive` in the Mac terminal.
     - (To not have to type paths:) You can drag-and-drop folders from the Finder/Explorer to the command prompt/terminal to get file paths.
- 
- #### Storage:
- Output files should be stored in the `drive` folder.
+ - Important: all output files should be stored in the `drive` folder.
