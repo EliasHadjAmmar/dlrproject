@@ -1,20 +1,23 @@
 import streamlit as st
 from streamlit_folium import st_folium
 import folium
-from PIL import Image
+from PIL import Image, ImageFilter
 
 from shapely.geometry import shape
 import geopandas as gpd
 
-# logo image
 
-logo_image = "/Users/nathan/Desktop/ifo_streamlit/DLR_Logo.svg.png"
-st.image(logo_image, width = 200)
 
 
 # Map Title
-st.title("Map")
-st.text("Note that you can choose the layer you want by changing the selection in top right corner of map")
+st.title("Interactive Land Prices Map")
+
+text = """Note that you can choose the layer you want by changing the selection in the top right
+corner of map. Neighborhoods provides descriptive information on neighborhood being hovered on.
+macro_element_div_3 displays segregation levels by color, but not specific neighborhood data"""
+
+st.markdown(text)
+
 
 # Sidebar
 data_options = {
@@ -25,6 +28,12 @@ data_options = {
     "Köln": "/Users/nathan/Library/CloudStorage/GoogleDrive-nathanmbewe5@gmail.com/.shortcut-targets-by-id/1j495iyGjPzVzr6s5r1wsfRbHdWi1nifC/ifoHack2023/output/Köln_map.gpkg"
 
 }
+# logo image
+
+logo_image = "/Users/nathan/Desktop/ifo_streamlit/DLR_Logo.svg.png"
+
+
+st.sidebar.image(logo_image, width = 200)
 selected_option = st.sidebar.selectbox("Select Data Option and hover over area", list(data_options.keys()))
 
 def load_data(path):
@@ -55,17 +64,23 @@ try:
     
     folium.LayerControl().add_to(m)
 
+
 # call to render Folium map in Streamlit
     st_data = st_folium(m, width=725)
-    print(data)
+    text2 = """The tables present Actual Land Values (Left),  Predicted Land Values (Middle) 
+    and Segregation values (Right) Neighborhood number
+"""
+
+    st.markdown(text2)
+
 
     data1= data['Land_Value']
     data2= data['Land_Value_predicted']
-    data3= data[["segregation_H","Neighborhood_FID"]]
+    data3= data["segregation_H"]
 
 
 # Create two columns for layout
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
 # Display the first table
     with col1:
@@ -74,6 +89,12 @@ try:
 # Display the second table
     with col2:
         st.dataframe(data2)
+
+# Display the second table
+    with col3:
+        st.dataframe(data3)
+
+    
 
 
 
