@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/eliashadjammar/GitHub/dlrproject/mlruns/0/1f116de8baaa4102967e962cb9e02488/artifacts
+end_time: 1682836326040
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: 1f116de8baaa4102967e962cb9e02488
+run_uuid: 1f116de8baaa4102967e962cb9e02488
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1682836324212
+status: 3
+tags: []
+user_id: eliashadjammar
